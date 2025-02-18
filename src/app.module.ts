@@ -2,9 +2,11 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AssetsModule } from './assets/assets.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { WalletModule } from './wallet/wallet.module';
 
 @Module({
-  imports: [AssetsModule],
+  imports: [MongooseModule.forRoot('mongodb://root:root@localhost:27018/nest?authSource=admin&directConnection=true'),AssetsModule, WalletModule],
   controllers: [AppController],
   providers: [AppService],
 })
