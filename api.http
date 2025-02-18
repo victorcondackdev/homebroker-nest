@@ -1,9 +1,11 @@
+# @name createAsset
+
 POST http://localhost:3000/assets
 Content-Type: application/json
 
 {
-  "name": "Amazon1",
-  "symbol": "A21",
+  "name": "Amazon132",
+  "symbol": "A2331",
   "price": "1030",
   "image": "AMZxN.png"
 }
@@ -30,5 +32,39 @@ GET http://localhost:3000/wallet
 
 @walletId = {{createWallet.response.body._id}}
 GET http://localhost:3000/wallet/{{walletId}}
+
+
+###
+
+@assetId = {{createAsset.response.body._id}}
+
+POST http://localhost:3000/wallet/{{walletId}}/assets
+Content-Type: application/json
+
+{
+  "assetId": "{{assetId}}",
+  "shares": 100
+}
+
+###
+
+POST http://localhost:3000/orders
+Content-Type: application/json
+
+{
+    "walletId": "{{ walletId }}",
+    "assetId": "{{ assetId }}",
+    "shares": 10,
+    "price": 100,
+    "type": "BUY"
+}
+###
+
+GET  http://localhost:3000/orders?walletId={{walletId}}
+
+###
+
+
+###
 
 

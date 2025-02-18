@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import { UpdateWalletDto } from './dto/update-wallet.dto';
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Wallet } from './entities/wallet.entity';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
+import { WalletAsset } from './entities/wallet-asset.entity';
+import { Asset } from 'src/assets/entities/asset.entity';
 
 @Injectable()
 export class WalletService {
-  constructor (@InjectModel(Wallet.name) private walletSchema: Model<Wallet>){
+  constructor (@InjectModel(Wallet.name) private walletSchema: Model<Wallet>, @InjectModel(Wallet.name) private walletAssetSchema: Model<WalletAsset>,    @InjectConnection() private connection: mongoose.Connection,
+){
   
     }
     create(createWalletDto: CreateWalletDto) {
@@ -18,8 +21,15 @@ export class WalletService {
       return this.walletSchema.find();
     }
   
-    findOne(symbol: string) {
-      return  this.walletSchema.findOne({symbol});
+    findOne(id: string) {
+      return this.walletSchema.findById(id).populate([
+        {
+          path: 'assets',
+          populate: ['asset'],
+        },
+      ]) as Promise<
+        (Wallet & { assets: (WalletAsset & { asset: Asset })[] }) | null
+      >;
     }
   
     update(id: number, updateWalletDto: UpdateWalletDto) {
@@ -28,5 +38,47 @@ export class WalletService {
   
     remove(id: number) {
       return `This action removes a #${id} wallet`;
+    }
+
+    async createWalletAsset(data: {
+      walletId: string;
+      assetId: string;
+      shares: number;
+    }) {
+      const session = await this.connection.startSession();
+      await session.startTransaction();
+      try {
+        const docs = await this.walletAssetSchema.create(
+          [
+            {
+              wallet: data.walletId,
+              asset: data.assetId,
+              shares: data.shares,
+            },
+          ],
+          { session },
+        );
+        const walletAsset = docs[0];
+        await this.walletSchema.updateOne(
+          { _id: data.walletId },
+          {
+            $push: { assets: walletAsset._id },
+          },
+          {
+            session,
+          },
+        );
+        await session.commitTransaction();
+        return walletAsset;
+      } catch (e) {
+        console.error(e);
+        await session.abortTransaction();
+        throw e;
+      } finally {
+        await session.endSession();
+      }
+    }
+    findOneWalletAsset(walletId: string){
+      return this.walletAssetSchema.find({wallet: walletId});
     }
 }

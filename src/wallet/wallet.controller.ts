@@ -31,4 +31,12 @@ export class WalletController {
   remove(@Param('id') id: string) {
     return this.walletService.remove(+id);
   }
+  @Post(':id/assets/')
+  createWalletAsset(@Param('id') id: string, @Body() body:{assetId: string, shares: number} ) {
+    return this.walletService.createWalletAsset({
+      walletId: id,
+      assetId: body.assetId,
+      shares: body.shares
+    });
+  }
 }
