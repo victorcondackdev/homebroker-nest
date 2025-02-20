@@ -1,9 +1,9 @@
 export class CreateAssetDto {
+  name: string;
 
-    name: string;
-    symbol: string;
-    image;
-    price: number;
+  symbol: string;
 
+  price: string;
 
+  image;
 }

@@ -1,53 +1,61 @@
+###
 # @name createAsset
-
 POST http://localhost:3000/assets
 Content-Type: application/json
 
 {
-  "name": "Amazon132",
-  "symbol": "A2331",
-  "price": "1030",
-  "image": "AMZxN.png"
+    "name": "Amazon",
+    "symbol": "A1",
+    "price": 100,
+    "image": "AMZN.png"
 }
 
 ###
-GET  http://localhost:3000/assets
+
+@assetId = {{ createAsset.response.body._id }}
 
 ###
-GET  http://localhost:3000/assets/A21
+GET http://localhost:3000/assets
 
 ###
-
-# @name createWallet
-POST http://localhost:3000/wallet
-
-
-
+GET http://localhost:3000/assets/A1
 
 ###
-
-GET http://localhost:3000/wallet
-
-###
-
-@walletId = {{createWallet.response.body._id}}
-GET http://localhost:3000/wallet/{{walletId}}
-
-
-###
-
-@assetId = {{createAsset.response.body._id}}
-
-POST http://localhost:3000/wallet/{{walletId}}/assets
+POST http://localhost:3000/assets/A1/dailies
 Content-Type: application/json
 
 {
-  "assetId": "{{assetId}}",
-  "shares": 100
+  "date": "2024-12-10",
+  "price": 100
 }
 
 ###
+GET http://localhost:3000/assets/A1/dailies
 
+###
+# @name createWallet
+POST http://localhost:3000/wallets
+
+###
+
+@walletId = {{ createWallet.response.body._id }}
+
+###
+GET http://localhost:3000/wallets
+
+###
+GET http://localhost:3000/wallets/{{ walletId }}
+
+###
+POST http://localhost:3000/wallets/{{ walletId }}/assets
+Content-Type: application/json
+
+{
+    "assetId": "{{ assetId }}",
+    "shares": 100
+}
+
+###
 POST http://localhost:3000/orders
 Content-Type: application/json
 
@@ -58,13 +66,6 @@ Content-Type: application/json
     "price": 100,
     "type": "BUY"
 }
-###
-
-GET  http://localhost:3000/orders?walletId={{walletId}}
 
 ###
-
-
-###
-
-
+GET http://localhost:3000/orders?walletId=fcc4de1c-f0fb-4c1e-afbb-f259f1672447

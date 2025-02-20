@@ -1,4 +1,4 @@
-import { AssetPresenter } from 'src/assets/asst.presenter';
+import { AssetPresenter } from '../assets/asset.presenter';
 import { Asset } from '../assets/entities/asset.entity';
 import { Order } from '../orders/entities/order.entity';
 
