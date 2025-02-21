@@ -4,10 +4,10 @@ POST http://localhost:3000/assets
 Content-Type: application/json
 
 {
-    "name": "Amazon",
-    "symbol": "A1",
-    "price": 100,
-    "image": "AMZN.png"
+    "name": "METAA",
+    "symbol": "METAA",
+    "price": 600,
+    "image": "localhost:9000/META.png"
 }
 
 ###
@@ -68,4 +68,4 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:3000/orders?walletId=fcc4de1c-f0fb-4c1e-afbb-f259f1672447
+GET http://localhost:3000/orders?walletId=2b8b5f86-98a4-4fc2-aa31-e6657a2bb5f2
